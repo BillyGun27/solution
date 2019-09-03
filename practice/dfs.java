@@ -1,3 +1,4 @@
+
 import java.util.*;
 public class Solution {
 
@@ -21,9 +22,10 @@ public class Solution {
 
         ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
 
-        int[][] inp = {{1,2},{2,3},{3,4},{4,1}};
+        int node = 5;
+        int[][] inp = {{1,2},{2,3},{3,4},{4,5},{2,5}};
 
-        for(int i=0; i<4+1;i++){
+        for(int i=0; i<node+1;i++){
             ArrayList<Integer> g = new ArrayList<Integer>();
             graph.add(g);
         }
@@ -32,9 +34,9 @@ public class Solution {
             graph.get(inp[i][0]).add(inp[i][1]);
         }
 
-        visited = new int[4+1];
+        visited = new int[node+1];
         //System.out.println(graph.get(1).get(0));
-        for(int i=1; i<4+1;i++){
+        for(int i=1; i<node+1;i++){
             if(visited[i] == 0 ){
                 DFS(i, graph);
             }
@@ -43,4 +45,6 @@ public class Solution {
 
     }
 }
+
+
 
