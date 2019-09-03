@@ -1,7 +1,18 @@
 import java.util.*;
 public class Solution {
 
-    static void DFS(int current, ArrayList<ArrayList<Integer>> graph, int[] visited ){
+    static int[] visited;
+    static void DFS(int current, ArrayList<ArrayList<Integer>> graph ){
+
+        visited[current] = 1;
+        System.out.println(current);
+
+        for(int i=0;i<graph.get(current).size();i++){
+            if(graph.get(current).get(i) == 0 ){
+                DFS(graph.get(current).get(i), graph);
+            }
+        }
+
 
     }
 
@@ -21,7 +32,15 @@ public class Solution {
             graph.get(inp[i][0]).add(inp[i][1]);
         }
 
-        System.out.println(graph.get(1).get(0));
+        visited = new int[4+1];
+        //System.out.println(graph.get(1).get(0));
+        for(int i=1; i<4+1;i++){
+            if(visited[i] == 0 ){
+                DFS(i, graph);
+            }
+        }
+        
+
     }
 }
 
