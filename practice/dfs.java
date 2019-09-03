@@ -1,4 +1,3 @@
-
 import java.util.*;
 public class Solution {
 
@@ -9,7 +8,7 @@ public class Solution {
         System.out.println(current);
 
         for(int i=0;i<graph.get(current).size();i++){
-            if(graph.get(current).get(i) == 0 ){
+            if(visited[graph.get(current).get(i)] == 0 ){
                 DFS(graph.get(current).get(i), graph);
             }
         }
