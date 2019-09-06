@@ -5,7 +5,7 @@ import java.text.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
-
+//Binary Search
 public class Solution {
 
     // Complete the minTime function below.
