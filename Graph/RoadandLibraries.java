@@ -35,28 +35,6 @@ public class Solution {
         return deadend;
     }
     
-    static long countClusterx(int c,long count){
-        //long deadend = 0 ;
-        visited[c] = 1;
-
-        //if(graph.get(c).size()<1){
-        //    deadend = 1;
-        //}
-
-        for(int i=0;i<graph.get(c).size();i++){
-            
-            if(visited[ graph.get(c).get(i) ] == 0){
-                //totalStreet++;
-           // System.out.println(graph.get(c).size()+" m "+c+" "+graph.get(c).get(i));
-                //count = 1 + countCluster(graph.get(c).get(i),count);
-            }//else{
-            //    deadend = 1;
-            //}
-
-        }
-
-        return count;
-    }
     
     // Complete the roadsAndLibraries function below.
     static long roadsAndLibraries(int n, long c_lib, long c_road, int[][] cities) {
