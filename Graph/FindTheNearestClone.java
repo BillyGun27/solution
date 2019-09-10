@@ -9,7 +9,8 @@ import java.util.regex.*;
 public class Solution {
     //graph problem
     // Complete the findShortest function below.
-    /*
+    
+    //Adjacent Matrix Version
     static int BFSx(int n,long[][] graph, int target , long[] ids ){
         //int currentLength=0;
         int shortestLength = graph.length;
@@ -57,8 +58,8 @@ public class Solution {
         }
 
         return shortestLength;
-    }*/
-
+    }
+        // Adjacent List Version
      static int BFS(int n,ArrayList<ArrayList<Integer>> graph, int target , long[] ids ){
         //int currentLength=0;
         int shortestLength = graph.size()+1;
