@@ -2,10 +2,10 @@ import java.util.*;
 public class Solution {
 
     static class AdjList{
-        static Node head;
-        static Node tail;
-        static Node current;
-        static int totalNode;
+        Node head;
+        Node tail;
+        Node current;
+        int totalNode;
 
         AdjList(){
             totalNode = 0;
@@ -14,27 +14,27 @@ public class Solution {
             current = head;
         }
 
-        public static void add(int data){
+        public void add(int data){
            totalNode++;
            Node n = new Node(data);
            tail.next = n;
            tail = tail.next;
         }
 
-        public static int get(){
+        public int get(){
             current = current.next;
             return current.data;
         }
         
-        public static void resetGet(){
+        public void resetGet(){
             current = head;
         }
 
-        public static int size(){
+        public int size(){
             return totalNode;
         }
 
-        static class Node{
+        class Node{
             int data;
             Node next;
 
@@ -49,7 +49,6 @@ public class Solution {
             }
         }
     }
-
     
 
 
