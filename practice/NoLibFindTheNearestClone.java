@@ -7,12 +7,58 @@ import java.util.concurrent.*;
 import java.util.regex.*;
 
 public class Solution {
+    static class AdjList{
+        Node head;
+        Node tail;
+        Node current;
+        int totalNode;
 
+        AdjList(){
+            totalNode = 0;
+            head = new Node();
+            tail = head;
+            current = head;
+        }
+
+        public void add(int data){
+           totalNode++;
+           Node n = new Node(data);
+           tail.next = n;
+           tail = tail.next;
+        }
+
+        public int get(){
+            current = current.next;
+            return current.data;
+        }
+        
+        public void resetGet(){
+            current = head;
+        }
+
+        public int size(){
+            return totalNode;
+        }
+
+        class Node{
+            int data;
+            Node next;
+
+            Node(){
+                data = 0;
+                next = null;
+            }
+
+            Node(int d){
+                data = d;
+                next = null;
+            }
+        }
+    }
 
     // Complete the findShortest function below.
-    static int BFS(int s, int[][] graph, int[] glen, long[] ids, int val){
-    //static int BFS(int s, ArrayList<ArrayList<Integer>> graph , long[] ids, int val){
-        int sizelen = graph.length+1 ;//graph.size()+1 ; //
+    static int BFS(int s, AdjList[] graph , long[] ids, int val){
+        int sizelen = graph.length+1 ;
         int[] fakeQueue = new int[sizelen];
         int start = 0, end = 1 ;
         
@@ -21,21 +67,14 @@ public class Solution {
         int[] distance = new int[sizelen]; 
         visited[s] = 1 ; 
         
-        //LinkedList<Integer> queue= new LinkedList<Integer>();
-        //queue.add(s);
         fakeQueue[start] = s;
 
         while(start<end){
-        //while(queue.size()>0){
             s = fakeQueue[start];
             start++;
-            //s = queue.poll();
-            //System.out.println(glen[s]);
-            for(int i=0;i<glen[s];i++){
-                int next = graph[s][i];
-            //System.out.println(graph.get(s).size());
-            //for(int i=0;i<graph.get(s).size();i++){
-              //  int next = graph.get(s).get(i);
+           
+            for(int i=0;i<graph[s].size();i++){
+                int next = graph[s].get();
 
                 if(visited[next]==0){
                     visited[next] = 1;
@@ -70,59 +109,30 @@ public class Solution {
      */
     static int findShortest(int graphNodes, int[] graphFrom, int[] graphTo, long[] ids, int val) {
         // solve here
-        
-        int[][] graph = new int[graphNodes+1][graphNodes-1];
-        int[] glen = new int[graphNodes+1];
-        
+
         int totVal= 0, start=0;
-        for(int i=0;i<ids.length;i++){
-            if(i<graphFrom.length){
-                int nodeA = graphFrom[i];
-                int nodeB =  graphTo[i];
-                //System.out.println(i+" "+graphFrom[i] + " "+ graphTo[i]);
-
-                graph[nodeA][glen[nodeA]] = nodeB;
-                glen[nodeA]++;
-
-                graph[nodeB][glen[nodeB]] = nodeA;
-                glen[nodeB]++;
-            }
-            
-            if(ids[i]==val){
-                totVal++;
-                start = i+1;
-            }
-
-            
-        }
-    
-        /*
-        int totVal= 0, start=0;
-         ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
-        for(int i=0; i<graphNodes+1 ; i++){
-            ArrayList<Integer> g = new ArrayList<Integer>(); 
-            graph.add(g);
-
+        AdjList[] graph = new AdjList[graphNodes+1];
+        for(int i=0;i<graphNodes+1;i++){
+            AdjList g = new AdjList();
+            graph[i] = g;
             if(i<ids.length){
                 if(ids[i] == val){
                     totVal++;
                     start = i+1;
                 }
             }
-            
         }
-
-        for(int i=0; i<graphFrom.length ; i++ ){
-            graph.get(graphFrom[i]).add(graphTo[i]);
-            graph.get(graphTo[i]).add(graphFrom[i]);
-        }
-        */
         
+        for(int i=0; i<graphFrom.length ; i++ ){
+            graph[graphFrom[i]].add(graphTo[i]);
+            graph[graphTo[i]].add(graphFrom[i]);
+        }
+       
         if(totVal<2){
             return -1;
         }else{
-            return BFS(start,graph,glen,ids,val);
-            //return BFS(start,graph,ids,val);
+        
+            return BFS(start,graph,ids,val);
         }
         
 
