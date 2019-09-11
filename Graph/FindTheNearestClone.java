@@ -11,6 +11,7 @@ public class Solution {
     // Complete the findShortest function below.
     
     //Adjacent Matrix Version
+    //did not pass
     static int BFSx(int n,long[][] graph, int target , long[] ids ){
         //int currentLength=0;
         int shortestLength = graph.length;
