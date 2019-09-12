@@ -7,10 +7,70 @@ import java.util.concurrent.*;
 import java.util.regex.*;
 
 public class Solution {
-    static int BFS(int[][][] graph,int[] arrlen ,int[] machines ){
-        int[] visited = new int[arrlen.length];
-        int[] min = new int[arrlen.length];
-        int[] fakeStack = new int[arrlen.length];
+     static class AdjList{
+        Node head;
+        Node tail;
+        Node current;
+        int totalNode;
+
+        AdjList(){
+            totalNode = 0;
+            head = new Node();
+            tail = head;
+            current = head;
+        }
+
+        public void add(int data , int weight){
+           totalNode++;
+           Node n = new Node(data,weight);
+           tail.next = n;
+           tail = tail.next;
+        }
+
+        //call next first before accessing
+        public void next(){
+            current = current.next;
+        }
+
+        public int getData(){
+            return current.data;
+        }
+
+        public int getWeight(){
+            return current.weight;
+        }
+        
+        public void resetGet(){
+            current = head;
+        }
+
+        public int size(){
+            return totalNode;
+        }
+
+        class Node{
+            int data;
+            int weight;
+            Node next;
+
+            Node(){
+                data = 0;
+                weight = 0;
+                next = null;
+            }
+
+            Node(int d, int w){
+                data = d;
+                weight = w;
+                next = null;
+            }
+        }
+    }
+
+    static int BFS(AdjList[] graph ,int[] machines ){
+        int[] visited = new int[graph.length+1];
+        int[] min = new int[graph.length+1];
+        int[] fakeStack = new int[graph.length+1];
         int start = 0;
         int end = 1;
 
@@ -25,9 +85,10 @@ public class Solution {
             start++;
             //System.out.println(s);
 
-            for(int i=0;i<arrlen[s];i++){
-                int next = graph[s][i][0];
-                int edge = graph[s][i][1];
+            for(int i=0;i<graph[s].size();i++){
+                graph[s].next();
+                int next = graph[s].getData();
+                int edge = graph[s].getWeight();
                 if(visited[next] == 0){
                     visited[next] = 1;
                     fakeStack[end]=next;
@@ -60,36 +121,24 @@ public class Solution {
     // Complete the minTime function below.
     static int minTime(int[][] roads, int[] machines) {
         int totCity = roads.length+1;
-        int[][][] graph = new int[totCity][totCity][2];
-        int[] arrlen = new int[totCity];
+        AdjList[] graph = new AdjList[totCity];
+
+        for(int i=0;i<totCity;i++){
+            AdjList g = new AdjList();
+            graph[i] = g; 
+        }
 
         for(int i=0;i<roads.length;i++){
             int nodeA = roads[i][0];
             int nodeB = roads[i][1];
             int edge = roads[i][2];
 
-            graph[nodeA][arrlen[nodeA]][0] = nodeB;
-            graph[nodeA][arrlen[nodeA]][1] = edge;
-            arrlen[nodeA]++;
+            graph[nodeA].add(nodeB,edge);
+            graph[nodeB].add(nodeA,edge);
 
-            graph[nodeB][arrlen[nodeB]][0] = nodeA;
-            graph[nodeB][arrlen[nodeB]][1] = edge;
-            arrlen[nodeB]++;
         }
 
-        /*
-        for(int i=0;i<arrlen.length;i++){
-            System.out.println(arrlen[i]);
-        }
-        for(int i=0;i<graph.length;i++){
-            for(int j=0;j<arrlen[i];j++){
-                System.out.print(graph[i][j][0] + " ");
-            }
-            System.out.println(" kkk ");
-        }*/
-
-        //System.out.println("dada");
-        return BFS(graph, arrlen, machines);
+        return BFS(graph, machines);
         
     }
 
