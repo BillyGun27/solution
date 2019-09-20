@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.regex.*;
 
 public class Solution {
+    static int shortest;
 
     public static class Graph{
         Node head;
@@ -27,6 +28,13 @@ public class Solution {
 
         public void next(){
             current = current.next;
+            if(current == null){
+                current = head;
+            }
+        }
+
+        public void reset(){
+            current = head;
         }
 
         public int get(){
@@ -36,6 +44,7 @@ public class Solution {
         public int getWeight(){
             return current.weight;
         }
+        
 
         public int size(){
             return s;
@@ -60,7 +69,8 @@ public class Solution {
         }
     }
 
-public static void dfs(int start,int[] target,Graph[] graph ,int[] visited,int distance){
+public static void dfs(int start,int[] target,Graph[] graph ,int[] visited,int[] searched,int distance){
+
         visited[start] = 1;
         int[] queue = new int[graph.length+1];
         
@@ -69,27 +79,47 @@ public static void dfs(int start,int[] target,Graph[] graph ,int[] visited,int d
             graph[start].next();
             int vertex = graph[start].get();
             int weight = graph[start].getWeight();
-            if(visited[vertex] == 0){
-                System.out.println(start+" "+vertex+" "+(distance+weight));
-                visited[vertex] = 1;
+            if(visited[vertex] < graph[vertex].size()){
+                //System.out.println(start+" "+vertex+" "+(distance+weight));
+                visited[vertex]++;
 
                 boolean found = false;
-                for(int j=0;j<target.length;j++){
-                    if(vertex == target[j]){
-                        System.out.println("found "+vertex+" "+ (distance+weight) );
-                        //return;
-                        found = true;
+                int all_searched = 1;
+                for(int j=0;j<target.length;j++){                        
+                    if(vertex == target[j] && searched[j] == 0 ){
+                            searched[j] = 1;
+                            //System.out.println("found "+vertex+" "+ (distance+weight) );
+                            found = true;
                     }
+                    
+                }
+
+                for(int j=0;j<target.length;j++){ 
+                    if(searched[j] == 0 ){
+                        all_searched = 0;
+                    }
+                    
+                }
+
+                if(all_searched == 1 && found){
+                    //System.out.println("all searched" + (distance+weight)  );
+                    if(shortest == 0){
+                        shortest = distance+weight;
+                    }else if( shortest > distance+weight ){
+                        shortest = distance+weight;
+                    }
+                    
+                    return;
                 }
                 
-                if(!found){
-                    dfs(vertex, target, graph, visited, distance+weight);
-                }
+                //if(!found){
+                    dfs(vertex, target, graph, visited,searched, distance+weight);
+                //}
                 
                 
             }
         }
-
+        graph[start].reset();
         //return;
 
         
@@ -116,10 +146,21 @@ public static void dfs(int start,int[] target,Graph[] graph ,int[] visited,int d
             graph[roads[i][1]].add(roads[i][0],roads[i][2]);
         }
 
-        int[] visited = new int[graph.length];
-        dfs(city[0],city,graph,visited,0);
+        //int[][] memo = new int[graph.length][graph.length]
+        
+        shortest = 0;
+
+        for(int i=0;i<city.length;i++){
+            int[] visited = new int[graph.length];
+            int[] searched = new int[city.length];
+            searched[i] = 1;
+            dfs(city[i],city,graph,visited,searched,0);
+        }
+        
+            
+            
        
-        return 0;
+        return shortest;
     }
 
     private static final Scanner scanner = new Scanner(System.in);
