@@ -88,7 +88,7 @@ public class Solution {
                     }
                     
                     //queue.add(next);
-                    fakeQueue[start] = next;
+                    fakeQueue[end] = next;
                     end++;
                 }
             }  
