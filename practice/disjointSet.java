@@ -27,7 +27,7 @@ public class Solution {
     }
 
     static boolean isCycle(Edge[] graph){
-        int parent[] = new int[VertexTotal];
+        int[] parent = new int[VertexTotal];
 
         for(int i=0;i<parent.length;i++){
             parent[i] = -1;
