@@ -11,7 +11,7 @@ public class Solution {
         }
     }
     
-    static int find(int parent[] , int i){
+    static int find(int[] parent , int i){
         if(parent[i] == -1){
             return i;
         }
@@ -19,7 +19,7 @@ public class Solution {
         return find(parent, parent[i]);
     }
 
-    static void union(int parent[],int x ,int y){
+    static void union(int[] parent,int x ,int y){
         int xx = find(parent,x);
         int yy = find(parent,y);
 
