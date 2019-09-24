@@ -12,7 +12,8 @@ import static java.util.stream.Collectors.toList;
 
 class Result {
 
-        static Map<Integer, Boolean> dp ;
+        //static Map<Integer, Boolean> dp ;
+        static int[] dp;
 
     public static String cracking(List<String> passwords, String loginAttempt,int attPos,String[] combination, int size ,String check){
         
@@ -26,7 +27,8 @@ class Result {
             return p;
         }
 
-        if (dp.containsKey(attPos)) {
+        //if (dp.containsKey(attPos)) {
+        if(dp[attPos] == 1){
             return "WRONG PASSWORD";
         }
     
@@ -43,7 +45,8 @@ class Result {
             
         }
 
-        dp.put(attPos, false);
+        //dp.put(attPos, false);
+        dp[attPos] = 1;
         return "WRONG PASSWORD";
 
     }
@@ -59,7 +62,9 @@ class Result {
 
     public static String passwordCracker(List<String> passwords, String loginAttempt) {
     // Write your code here
-        dp  = new HashMap<>();
+        //dp  = new HashMap<>();
+        dp = new int[loginAttempt.length()];
+
         String[] combination= new String[loginAttempt.length()];
 
         return cracking(passwords,loginAttempt,0,combination,0,"");
