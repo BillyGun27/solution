@@ -10,42 +10,53 @@ public class Solution {
 
     static String printed;
     static boolean found;
-    static void expressions(int[] arr,int cur, int result,char[] ops){
+    static int[][] dp;
+    static void expressions(int[] arr,int cur, long result,char[] ops){
         if(found){
             return;
         }
-        if(cur == arr.length){
-            //System.out.println(result);
-            if(result % 101 == 0 ){
-                found = true;
-                int i;
-                
-                for(i=0;i<ops.length;i++){
-                    //System.out.print(ops[i]+" ");
-                    printed+=arr[i]+Character.toString(ops[i]) ;
-                }
-                printed += arr[i];
-                //System.out.println(result);
-
-                
-            }
-            //return result;
-             return;
+        if(dp[(int)(result%101L)+101][cur] == 1){
+            return;
         }
-        //System.out.println(cur);
+        
+        if(result % 101L == 0 ){
+            found = true;
+            int i;
+            
+            for(i=0;i<ops.length;i++){
+                char op = '*';
+                if(i<cur-1){
+                    op = ops[i];
+                }
+
+                printed+=arr[i]+Character.toString(op) ;
+            }
+            printed += arr[i];
+
+            return;
+        }
+        
+        if(cur == arr.length){  
+            //System.out.println((result%101)+" "+result ); 
+            dp[(int)(result%101L)+101][cur] = 1;
+            return;
+        }
+        
+        
         ops[cur-1] = '+';
-        int accum = result + arr[cur];
+        long accum = ( (result%101L) + (arr[cur]%101L) %101L);
         expressions(arr,cur+1,accum,ops);
 
         ops[cur-1] = '*';
-        accum = result * arr[cur];
+        accum = ( (result%101L) * (arr[cur]%101L) %101L );
         expressions(arr,cur+1,accum,ops);
 
         ops[cur-1] = '-';
-        accum = result - arr[cur];
+        accum = ( (result%101L) - (arr[cur]%101L) %101L );
         expressions(arr,cur+1,accum,ops);
 
-        
+        dp[(int)(result%101L)+101][cur] = 1;
+        return ;
     }
 
     // Complete the arithmeticExpressions function below.
@@ -53,8 +64,8 @@ public class Solution {
         char[] ops = new char[arr.length-1];
         printed = "";
         found = false;
+        dp = new int[202][arr.length+1];
 
-        //System.out.println(expressions(arr,1,arr[0])
         expressions(arr,1,arr[0],ops);
         return printed;
 
