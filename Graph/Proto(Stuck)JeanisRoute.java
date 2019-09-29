@@ -3,9 +3,32 @@ import java.math.*;
 import java.text.*;
 import java.util.*;
 import java.util.regex.*;
+/*
+15 3
+1 14 15
+13 14 10
+14 7 7
+12 7 1
+7 3 9 
+3 8 10
+8 15 2
+8 9 7
+15 11 8
+10 15 10
+3 1 4
+1 2 9
+1 4 11
+6 4 10
+4 5 12
 
+5 3
+1 3 4
+1 2 1
+2 3 2
+2 4 2
+3 5 3
+*/
 public class Solution {
-    static int shortest;
 
     public static class Graph{
         Node head;
@@ -69,63 +92,40 @@ public class Solution {
         }
     }
 
-public static void dfs(int start,int[] target,Graph[] graph ,int[] visited,int[] searched,int distance){
-
+    static int dfs(int start,int[] city, Graph[] graph,int[] visited,int[] searched,int[] distance ){
         visited[start] = 1;
-        int[] queue = new int[graph.length+1];
-        
-            
+        int sum = 0;
+
         for(int i=0;i<graph[start].size();i++){
             graph[start].next();
-            int vertex = graph[start].get();
+            int next = graph[start].get();
             int weight = graph[start].getWeight();
-            if(visited[vertex] < graph[vertex].size()){
-                //System.out.println(start+" "+vertex+" "+(distance+weight));
-                visited[vertex]++;
-
-                boolean found = false;
-                int all_searched = 1;
-                for(int j=0;j<target.length;j++){                        
-                    if(vertex == target[j] && searched[j] == 0 ){
-                            searched[j] = 1;
-                            //System.out.println("found "+vertex+" "+ (distance+weight) );
-                            found = true;
+            if(visited[next] == 0){
+                distance[next] = distance[start]+weight;
+                //System.out.println("next"+next);
+                for(int j=0;j<city.length;j++){
+                    if(city[j] == next && searched[j]==0){
+                        searched[j] = 1;
+                        sum+=weight;
+                        //System.out.println("found" + city[j]+" "+distance[next]);
+                        if(maxLink<distance[next]){
+                            maxLink=distance[next];
+                        }
                     }
-                    
                 }
 
-                for(int j=0;j<target.length;j++){ 
-                    if(searched[j] == 0 ){
-                        all_searched = 0;
-                    }
-                    
+                int found = dfs(next,city,graph,visited,searched,distance);
+                if(found>0){
+                    sum += found+weight;
                 }
-
-                if(all_searched == 1 && found){
-                    //System.out.println("all searched" + (distance+weight)  );
-                    if(shortest == 0){
-                        shortest = distance+weight;
-                    }else if( shortest > distance+weight ){
-                        shortest = distance+weight;
-                    }
-                    
-                    return;
-                }
-                
-                //if(!found){
-                    dfs(vertex, target, graph, visited,searched, distance+weight);
-                //}
-                
-                
             }
         }
         graph[start].reset();
-        //return;
 
-        
-
+        return sum;
     }
 
+    static int maxLink ;
     /*
      * Complete the jeanisRoute function below.
      */
@@ -145,22 +145,25 @@ public static void dfs(int start,int[] target,Graph[] graph ,int[] visited,int[]
             graph[roads[i][0]].add(roads[i][1],roads[i][2]);
             graph[roads[i][1]].add(roads[i][0],roads[i][2]);
         }
-
-        //int[][] memo = new int[graph.length][graph.length]
         
-        shortest = 0;
-
-        for(int i=0;i<city.length;i++){
+        int sum = 0;
+        maxLink = 0;
+        for(int i=0;i<city.length-1;i++){
             int[] visited = new int[graph.length];
             int[] searched = new int[city.length];
-            searched[i] = 1;
-            dfs(city[i],city,graph,visited,searched,0);
+            int[] distance = new int[graph.length];
+            for(int j=0;j<i+1;j++){
+                searched[j] = 1;
+            }
+            //System.out.println("start "+city[i]);
+            
+            int fakeSum = dfs(city[i],city,graph,visited,searched,distance);
+            if(i==0){
+                sum = fakeSum;
+            }
         }
-        
-            
-            
-       
-        return shortest;
+        //System.out.println("maxLink"+maxLink);
+        return (sum*2)-maxLink;
     }
 
     private static final Scanner scanner = new Scanner(System.in);
