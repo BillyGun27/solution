@@ -6,23 +6,28 @@ import java.util.regex.*;
 
 public class Solution {
     static int shortest;
-    static void shortestWormhole(int[] start,int[] finish,int[][] hole,int current,int[] visited,int distance){
+    static void shortestWormhole(int[] start,int[] finish,int[][] hole,int current,int set,int[] visited,int distance){
         //check finish
-        int toFinish =  Math.abs(finish[0] - hole[current][2]) + Math.abs(finish[1] - hole[current][3]);
+        int toFinish =  Math.abs(finish[0] - hole[current][set]) + Math.abs(finish[1] - hole[current][set+1]);
         if( distance+toFinish < shortest ){
             //System.out.println("f"+current+" "+(distance+toFinish));
             shortest = distance+toFinish;
-        }else{
-            return;
         }
+        /*else{
+            return;
+        }*/
         
         //try other wormhole
         for(int i=0;i<hole.length;i++){
-            int nextHole  = Math.abs(hole[i][0] - hole[current][2]) + Math.abs(hole[i][1] - hole[current][3]);
-            if( visited[i]==0  && ((distance+nextHole)<shortest) ){//
-                //System.out.println("c "+current+" "+i+" "+(distance+nextHole)+" "+Arrays.toString(visited));
+            int nextHoleA  = Math.abs(hole[i][0] - hole[current][set]) + Math.abs(hole[i][1] - hole[current][set+1]);
+            int nextHoleB  = Math.abs(hole[i][2] - hole[current][set]) + Math.abs(hole[i][3] - hole[current][set+1]);
+      
+            if( visited[i]==0  ){//&& ((distance+shortestDistance)<shortest)
+                //System.out.println("c "+current+" "+i+" "+(distance+nextHoleB)+" "+Arrays.toString(visited));
+                //System.out.println("c "+current+" "+i+" "+(distance+nextHoleA)+" "+Arrays.toString(visited));
                 visited[i] = 1;
-                shortestWormhole(start,finish,hole,i,visited,distance+nextHole);
+                shortestWormhole(start,finish,hole,i,0,visited,distance+nextHoleB);
+                shortestWormhole(start,finish,hole,i,2,visited,distance+nextHoleA);
                 visited[i] = 0;
             }
         }
@@ -58,11 +63,13 @@ public class Solution {
         //System.out.println(start[0]+" "+finish[0]+" "+n+" "+hole[0][0]+" "+hole[1][3]);
         int[] visited = new int[n];
         for(int i=0;i<n;i++){
-            int distance  = Math.abs(hole[i][0] - start[0]) + Math.abs(hole[i][1] - start[1]);
+            int distanceA  = Math.abs(hole[i][0] - start[0]) + Math.abs(hole[i][1] - start[1]);
+            int distanceB  = Math.abs(hole[i][2] - start[0]) + Math.abs(hole[i][3] - start[1]);
+            
             visited[i] = 1;
             //System.out.println("st "+i+" "+Arrays.toString(visited));
-           
-            shortestWormhole(start,finish,hole,i,visited,distance);
+            shortestWormhole(start,finish,hole,i,0,visited, distanceB);
+            shortestWormhole(start,finish,hole,i,2,visited, distanceA);
             visited[i] = 0;
         }
         
