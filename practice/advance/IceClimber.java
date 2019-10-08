@@ -9,6 +9,7 @@ public class Solution {
     static void climbing(int[][] stage, int x,int y,int[] current,int[] goal, int[][] visited, int difficult){
         int cy = current[0];
         int cx = current[1];
+        
         int[] next = new int[2];
         for(int i=-1;i<2;i++){//y
             for(int j=-1;j<2;j++){//x
@@ -17,34 +18,60 @@ public class Solution {
                 if( (0 <= ny && ny < y) && (0 <= nx && nx < x) ){
                     if( (i==0 || j==0) && i != j  && visited[ny][nx] == 0){
                         //System.out.println("coor "+j + " " + i);
-                        visited[ny][nx] = 1;
+                        
                         next[0] = ny;
                         next[1] = nx;
+                        visited[ny][nx] = 1;
                         if(stage[cy][cx] != 0){//normal
                             if( stage[ny][nx] == 3 ){
-                                System.out.println("found" + cy+" "+cx+" left/right "+ny+" "+nx +" diff " + difficult);
+                                //System.out.println("found" + cy+" "+cx+" f "+ny+" "+nx +" diff " + difficult);
                                 if(difficult<level){
                                     level = difficult;
                                 }
-                            }else if(i==0 && stage[ny][nx] != 0){//left & right
-                                System.out.println(cy+" "+cx+" left/right "+ny+" "+nx);
+                            }else if(stage[ny][nx] == 1){
+                                //System.out.println(cy+" "+cx+" -> "+ny+" "+nx);
                                 climbing(stage,x, y,next ,goal, visited, difficult);
-                            }else if(j==0){//up and down
-                                if(stage[ny][nx] != 0){
-                                    System.out.println(cy+" "+cx+" up/down "+ny+" "+nx);
-                                    climbing(stage,x, y,next ,goal, visited, difficult);
-                                }else if(stage[ny][nx] == 0){
-                                    System.out.println(cy+" "+cx+" jump "+ny+" "+nx+" diff "+(difficult+1) );
-                                     climbing(stage,x, y,next ,goal, visited, difficult+1);
+                            }else if(stage[ny][nx] == 0 && j == 0 ){//climb up
+                                int climb = 0;
+                                int cur = cy; 
+                                if(i==1){//down
+                                    while( cur < y-1 ){
+                                        cur+=i;
+                                        climb++;
+                                        
+                                        if(stage[cur][cx] != 0){
+                                            break;
+                                        }
+                                    }
+                                }else if(i==-1){//up
+                                    while( 0 < cur ){
+                                        cur+=i;
+                                        climb++;
+                                        
+                                        if(stage[cur][cx] != 0){
+                                            break;
+                                        }
+                                        
+                                    }
+                                }
+                                
+                               
+                                if( stage[cur][cx] == 3 ){
+                                        //System.out.println("found sp" + cy+" "+cx+" f "+cur+" "+cx+" diff "+climb);
+                                        if(climb<level){
+                                            level = climb;
+                                        }
+                                }else{
+                                    next[0] = cur;
+                                    next[1] = cx;
+                                    //System.out.println(cy+" "+cx+" climb up-> "+cur+" "+cx+" diff "+climb);
+                                    climbing(stage,x, y,next ,goal, visited, climb);
                                 }
                             }
-                        }else if(stage[cy][cx] == 0 && j==0 ){//increase difficulty
-                            System.out.println(cy+" "+cx+" jump zero "+ny+" "+nx+" "+" diff "+(difficult+1) );
-                            climbing(stage,x, y,next ,goal, visited, difficult+1);
                         }
                         
+                        
                         visited[ny][nx] = 0;
-                       
                     }
                 }
             }
@@ -82,8 +109,8 @@ public class Solution {
         
         //System.out.println(x+" "+y+" "+stage[0][0]+" "+stage[y-1][0]+" "+stage[0][x-1]+" "+stage[1][6]);
     
-        climbing(stage,x,y,start,goal,visited,0);
+        climbing(stage,x,y,start,goal,visited,1);
         
-        System.out.println("f" + level);
+        System.out.println("f " + level);
     }
 }
