@@ -5,77 +5,179 @@ import java.math.*;
 import java.util.regex.*;
 
 public class Solution {
-    static int level;
-    static void climbing(int[][] stage, int x,int y,int[] current,int[] goal, int[][] visited, int difficult){
-        int cy = current[0];
-        int cx = current[1];
+    
+    static class spot{
+        int value;
+        int order;
+    }
+    static class point{
+        int y;
+        int x;
+    }
+    static int minDistance(int[] visited, int[] diff){
+        int mindiff = Integer.MAX_VALUE;
+        int point = 0;
         
-        int[] next = new int[2];
-        for(int i=-1;i<2;i++){//y
-            for(int j=-1;j<2;j++){//x
-                int ny = cy+i;
-                int nx = cx+j;
-                if( (0 <= ny && ny < y) && (0 <= nx && nx < x) ){
-                    if( (i==0 || j==0) && i != j  && visited[ny][nx] == 0){
-                        //System.out.println("coor "+j + " " + i);
-                        
-                        next[0] = ny;
-                        next[1] = nx;
-                        visited[ny][nx] = 1;
-                        if(stage[cy][cx] != 0){//normal
-                            if( stage[ny][nx] == 3 ){
-                                //System.out.println("found" + cy+" "+cx+" f "+ny+" "+nx +" diff " + difficult);
-                                if(difficult<level){
-                                    level = difficult;
-                                }
-                            }else if(stage[ny][nx] == 1){
-                                //System.out.println(cy+" "+cx+" -> "+ny+" "+nx);
-                                climbing(stage,x, y,next ,goal, visited, difficult);
-                            }else if(stage[ny][nx] == 0 && j == 0 ){//climb up
-                                int climb = 0;
-                                int cur = cy; 
-                                if(i==1){//down
-                                    while( cur < y-1 ){
-                                        cur+=i;
-                                        climb++;
-                                        
-                                        if(stage[cur][cx] != 0){
-                                            break;
-                                        }
-                                    }
-                                }else if(i==-1){//up
-                                    while( 0 < cur ){
-                                        cur+=i;
-                                        climb++;
-                                        
-                                        if(stage[cur][cx] != 0){
-                                            break;
-                                        }
-                                        
-                                    }
-                                }
-                                
-                               
-                                if( stage[cur][cx] == 3 ){
-                                        //System.out.println("found sp" + cy+" "+cx+" f "+cur+" "+cx+" diff "+climb);
-                                        if(climb<level){
-                                            level = climb;
-                                        }
-                                }else{
-                                    next[0] = cur;
-                                    next[1] = cx;
-                                    //System.out.println(cy+" "+cx+" climb up-> "+cur+" "+cx+" diff "+climb);
-                                    climbing(stage,x, y,next ,goal, visited, climb);
-                                }
-                            }
-                        }
-                        
-                        
-                        visited[ny][nx] = 0;
+        for(int i=0;i<diff.length;i++){
+                if(diff[i]<mindiff && visited[i]==0){
+                    mindiff = diff[i];
+                    point = i;
+                }
+        }
+        
+        return point;
+    }
+    
+    static spot getUpDiffY(spot[][] stage, point[] step, int current, int y, int[] visited, int[] diff){
+     
+        int cy = 1;
+        spot nd = new spot();
+        
+        while(y <= step[current].y-cy){//y->0
+            int val = stage[ step[current].y-cy ][ step[current].x ].value;
+            int pos = stage[ step[current].y-cy ][ step[current].x ].order;
+
+            if(  val != 0 && visited[pos] == 0 ){
+                int nextDiff = cy;
+                if( nextDiff < diff[current]){
+                    nextDiff = diff[current];
+                }
+
+                if( nextDiff < diff[pos] ){
+                    nd.value = nextDiff;
+                    nd.order = pos; 
+                }
+                //System.out.println("Up val="+val+" next="+nextDiff+"/"+nd.value+" pos="+pos+"/"+nd.order);
+                return nd; 
+            }
+            
+            cy++;
+            
+        }
+        
+        nd.value = -1;
+        nd.order = -1; 
+        
+        return nd;
+    }
+    
+    static spot getDownDiffY(spot[][] stage, point[] step, int current, int y, int[] visited, int[] diff){
+        
+        int cy = 1;
+        spot nd = new spot();
+        
+        while( step[current].y+cy <y ){//y->max y
+            int val = stage[ step[current].y+cy ][ step[current].x ].value;
+            int pos = stage[ step[current].y+cy ][ step[current].x ].order;
+
+            if(  val != 0 && visited[pos] == 0 ){
+                int nextDiff = cy;
+                if( nextDiff < diff[current]){
+                    nextDiff = diff[current];
+                }
+
+                if( nextDiff < diff[pos] ){
+                    nd.value = nextDiff;
+                    nd.order = pos; 
+                }
+                //System.out.println("Down val="+val+" next="+nextDiff+"/"+nd.value+" pos="+pos+"/"+nd.order);
+                return nd; 
+            }
+            
+            cy++;
+            
+        }
+        
+            nd.value = -1;
+            nd.order = -1; 
+
+            return nd;
+        
+    }
+    
+    static spot getDiffX(spot[][] stage, point[] step, int current,int xx , int[] visited, int[] diff){
+        spot nd = new spot();
+        int val = stage[ step[current].y ][ step[current].x+xx ].value;
+        int pos = stage[ step[current].y ][ step[current].x+xx ].order;
+        
+        if(  val != 0 && visited[pos] == 0 ){
+            int nextDiff = 1;
+            if( nextDiff < diff[current]){
+                nextDiff = diff[current];
+            }
+
+            if( nextDiff < diff[pos] ){
+                nd.value = nextDiff;
+                nd.order = pos; 
+            }
+            //System.out.println("LR val="+val+" next="+nextDiff+"/"+nd.value+" pos="+pos+"/"+nd.order);
+            return nd;
+        }
+        
+        nd.value = -1;
+        nd.order = -1; 
+
+        return nd;
+        
+    }
+    
+    static int climbing(spot[][] stage,point[] step, int totalStep,int y, int x, int start,int goal ){
+        int[] visited = new int[totalStep];
+        int[] diff = new int[totalStep];
+        
+        //all infinite
+        for(int i=0;i<totalStep;i++){
+            diff[i] = Integer.MAX_VALUE;   
+        }
+        diff[start] = 0;
+        
+        for(int i=0;i<totalStep;i++){
+                int current = minDistance(visited,diff);
+                visited[current] = 1;
+
+                spot nd = new spot();
+                //System.out.println("x="+step[current].x+" y="+step[current].y+" c="+current+" diff="+diff[current]);
+            
+                //up -1 0
+                 nd = getUpDiffY(stage, step, current , 0, visited , diff);
+                 if(nd.order != -1){
+                     diff[nd.order] = nd.value; 
+                     // System.out.println("up x="+step[nd.order].x+" y="+step[nd.order].y+" c="+nd.order+" diff="+diff[nd.order]);
+                 }
+                 
+                     
+                //down 1 0
+                nd = getDownDiffY(stage, step, current , y, visited , diff);
+                if(nd.order != -1){
+                    diff[nd.order] = nd.value; 
+                    //System.out.println("down x="+step[nd.order].x+" y="+step[nd.order].y+" c="+nd.order+" diff="+diff[nd.order]);
+                }
+                    
+                if( 0 <= step[current].x-1 ){
+                    //left 0 -1
+                    nd = getDiffX(stage, step, current , -1, visited, diff );
+                    if(nd.order != -1){
+                    diff[nd.order] = nd.value;
+                    //System.out.println("left x="+step[nd.order].x+" y="+step[nd.order].y+" c="+nd.order+" diff="+diff[nd.order]);
                     }
                 }
-            }
+                
+                   
+                if( step[current].x+1 < x ){
+                    //right 0 1
+                    nd = getDiffX(stage, step, current , 1, visited, diff );
+                    if(nd.order != -1){
+                    diff[nd.order] = nd.value;
+                        //System.out.println("right x="+step[nd.order].x+" y="+step[nd.order].y+" c="+nd.order+" diff="+diff[nd.order]);
+                    }
+                }
+                
+                
         }
+        
+        return diff[goal];
+        
+        
     }
 
     public static void main(String[] args) {
@@ -84,33 +186,46 @@ public class Solution {
         
         int x = scanner.nextInt();
         int y = scanner.nextInt();
-        int[][] stage = new int[y][x];
-        int[][] visited = new int[y][x];
+        spot[][] stage = new spot[y][x];
         
-        int[] start = new int[2];//yx
-        int[] goal = new int[2];//yx
+        int start = 0;//yx
+        int goal = 0;//yx
+        point[] step = new point[y*x];
+        int totalStep = 0;
         for(int i=0;i<y;i++){
             for(int j=0;j<x;j++){
-                stage[i][j] = scanner.nextInt();
-                if(stage[i][j] == 2){
-                    start[0] = i;
-                    start[1] = j;             
-                    visited[i][j] = 1;
+                stage[i][j] = new spot();
+                stage[i][j].value = scanner.nextInt();
+                
+                if(stage[i][j].value != 0){
+                    step[totalStep] = new point();
+                    step[totalStep].y = i;
+                    step[totalStep].x = j;  
+                    stage[i][j].order = totalStep; 
+                    
+                    if(stage[i][j].value == 2){
+                        start = totalStep;
+                        
+                    }
+
+                    if(stage[i][j].value == 3){
+                        goal = totalStep;                    
+                    }
+                    
+                    totalStep++;
                 }
                 
-                if(stage[i][j] == 3){
-                    goal[0] = i;
-                    goal[1] = j;                    
-                }
+                
             }
             
         }
-        level = Integer.MAX_VALUE;
         
         //System.out.println(x+" "+y+" "+stage[0][0]+" "+stage[y-1][0]+" "+stage[0][x-1]+" "+stage[1][6]);
-    
-        climbing(stage,x,y,start,goal,visited,1);
+        //System.out.println(totalStep);
+        int level;
+        level = climbing(stage,step,totalStep,y,x,start,goal);
         
-        System.out.println("f " + level);
+        //System.out.println("f " + level);
+        System.out.println(level);
     }
 }
