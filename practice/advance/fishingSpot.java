@@ -36,17 +36,17 @@ public class Solution {
             if(visitedGate[i] == 0){
 
                 visitedGate[i] = 1;
-                /*
-                if( Gate[i][1] % 2 == 0 ){
-                    System.out.println(current+" "+i+" right left");
-                }else{
-                    System.out.println(current+" "+i);
-                }*/
-                orderText[dist] = i+"r";
-                searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,orderText,dist+1);
+               
+                if( Gate[i][1] % 2 != 0 ){
+                    orderText[dist] = i+"r";
+                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,orderText,dist+1);
 
-                orderText[dist] = i+"l";
-                searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,orderText,dist+1);
+                    orderText[dist] = i+"l";
+                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,orderText,dist+1);
+                }else{
+                    orderText[dist] = i+"";
+                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,orderText,dist+1);
+                }
                 visitedGate[i] = 0;
 
             }
