@@ -22,11 +22,47 @@ import java.util.*;
 
 public class Solution {
 
-    static void searchSpot(int[][] Gate,int TotalSpot,int[] visitedSpot,int[] visitedGate, String[] orderText , int dist){
-        if(dist >= 3){
-            for(int i=0;i<3;i++){
-                System.out.print(orderText[i]+" ");
+    static void SpotPlacement(int[][] Gate,int TotalSpot,int[] visitedSpot, int current , int lastchoice){//lastchoice 0=do nothing 1=right 2=left
+        
+            int fish = 0;
+            int pos = 0;
+            if(visitedSpot[Gate[current][0]]==0){
+                visitedSpot[ Gate[current][0] ] = pos+1;
+                fish++;
             }
+            pos++;
+            
+            while(fish<Gate[current][1]){
+                if( fish == Gate[current][1]-1 ){
+                    if(lastchoice == 1){
+                        visitedSpot[ Gate[current][0] + pos ] = pos+1;
+                        fish++;
+                    }else if(lastchoice == 2){
+                        visitedSpot[ Gate[current][0] - pos ] = pos+1;
+                        fish++;
+                    }
+                }
+
+                if( ( (Gate[current][0] + pos)<=TotalSpot ) && fish<Gate[current][1] && visitedSpot[Gate[current][0] + pos ]==0 ){
+                        visitedSpot[ Gate[current][0] + pos ] = pos+1;
+                        fish++;
+                }
+                if( ( 0<(Gate[current][0] - pos) ) && fish<Gate[current][1] && visitedSpot[Gate[current][0] - pos ]==0){
+                        visitedSpot[ Gate[current][0] - pos ] = pos+1;
+                        fish++;
+                }
+                pos++;
+            }
+            
+            
+        for(int i=1;i<visitedSpot.length;i++){
+            System.out.print(visitedSpot[i]+" ");
+        }
+    }
+
+    static void searchSpot(int[][] Gate,int TotalSpot,int[] visitedSpot,int[] visitedGate, int dist){
+        if(dist >= 3){
+            
             System.out.println(" finish");
             return;
         }
@@ -38,50 +74,23 @@ public class Solution {
                 visitedGate[i] = 1;
                
                 if( Gate[i][1] % 2 != 0 ){
-                    orderText[dist] = i+"r";
-                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,orderText,dist+1);
+                    
+                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,dist+1);
 
-                    orderText[dist] = i+"l";
-                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,orderText,dist+1);
+                    
+                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,dist+1);
                 }else{
-                    orderText[dist] = i+"";
-                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,orderText,dist+1);
+                   
+                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,dist+1);
                 }
                 visitedGate[i] = 0;
 
             }
 
-            /*
-            int fish = 0;
-            int pos = 0;
-
-            if(visitedSpot[Gate[i][0]]==0){
-                visitedSpot[ Gate[i][0] ] = pos+1;
-                fish++;
-            }
-            pos++;
-            
-            while(fish<Gate[i][1]){
-                if( ( (Gate[i][0] + pos)<=TotalSpot ) && fish<Gate[i][1] && visitedSpot[Gate[i][0] + pos ]==0 ){
-                        visitedSpot[ Gate[i][0] + pos ] = pos+1;
-                        fish++;
-                }
-
-                if( ( 0<(Gate[i][0] - pos) ) && fish<Gate[i][1] && visitedSpot[Gate[i][0] - pos ]==0){
-                        visitedSpot[ Gate[i][0] - pos ] = pos+1;
-                        fish++;
-                }
-
-                pos++;
-            }
-            */
 
         }
         
-        /*
-        for(int i=1;i<visitedSpot.length;i++){
-            System.out.print(visitedSpot[i]+" ");
-        }*/
+        
 
     }
 
@@ -104,7 +113,10 @@ public class Solution {
         int[] visitedGate = new int[3];
         String[] orderText = new String[3];
         int dist = 0 ;
-        searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,orderText, dist);
-        System.out.println(Gate[0][0]); 
+        //searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,dist);
+        SpotPlacement(Gate,TotalSpot,visitedSpot, 0 , 0);
+        SpotPlacement(Gate,TotalSpot,visitedSpot, 1 , 1);
+        
+        //System.out.println(Gate[0][0]); 
     }
 }
