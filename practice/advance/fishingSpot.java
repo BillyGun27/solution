@@ -1,5 +1,5 @@
 /*
-5
+4
 10
 4 5
 6 2
@@ -21,7 +21,7 @@
 import java.util.*;
 
 public class Solution {
-
+    static int shortest ;
     static void SpotPlacement(int[][] Gate,int TotalSpot,int[] visitedSpot, int current , int lastchoice){//lastchoice 0=do nothing 1=right 2=left
         
             int fish = 0;
@@ -34,10 +34,13 @@ public class Solution {
             
             while(fish<Gate[current][1]){
                 if( fish == Gate[current][1]-1 ){
-                    if(lastchoice == 1){
+                    //System.out.println(current+" "+Gate[current][0]+" "+pos);
+                    if(lastchoice == 1 && (Gate[current][0] + pos)<=TotalSpot  && visitedSpot[Gate[current][0] + pos ]==0){
                         visitedSpot[ Gate[current][0] + pos ] = pos+1;
                         fish++;
-                    }else if(lastchoice == 2){
+                    }
+                    
+                    if(lastchoice == 2 && 0<(Gate[current][0] - pos)  && visitedSpot[Gate[current][0] - pos ]==0){
                         visitedSpot[ Gate[current][0] - pos ] = pos+1;
                         fish++;
                     }
@@ -55,33 +58,44 @@ public class Solution {
             }
             
             
-        for(int i=1;i<visitedSpot.length;i++){
-            System.out.print(visitedSpot[i]+" ");
-        }
+       // for(int i=1;i<visitedSpot.length;i++){
+        //    System.out.print(visitedSpot[i]+" ");
+        //} System.out.println(" ");
     }
+
 
     static void searchSpot(int[][] Gate,int TotalSpot,int[] visitedSpot,int[] visitedGate, int dist){
         if(dist >= 3){
-            
-            System.out.println(" finish");
+            int total = 0;
+            for(int i=1;i<visitedSpot.length;i++){
+                total+=visitedSpot[i];
+            } 
+            //System.out.println(total);
+            //System.out.println(" finish");
+            if(total<shortest){
+                shortest = total ;
+            }
             return;
         }
         
 
         for(int i=0;i<3;i++){
             if(visitedGate[i] == 0){
-
+                //System.out.println(i);
                 visitedGate[i] = 1;
                
-                if( Gate[i][1] % 2 != 0 ){
-                    
-                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,dist+1);
+                if( Gate[i][1] % 2 == 0 ){
+                    int[] leftvisited = visitedSpot.clone();
+                    SpotPlacement(Gate,TotalSpot,leftvisited, i , 2);
+                    searchSpot(Gate,TotalSpot,leftvisited,visitedGate,dist+1);
 
-                    
-                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,dist+1);
+                    int[] rightvisited = visitedSpot.clone();
+                    SpotPlacement(Gate,TotalSpot,rightvisited, i , 1);
+                    searchSpot(Gate,TotalSpot,rightvisited,visitedGate,dist+1);
                 }else{
-                   
-                    searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,dist+1);
+                    int[] centervisited = visitedSpot.clone();
+                    SpotPlacement(Gate,TotalSpot,centervisited, i , 0);
+                    searchSpot(Gate,TotalSpot,centervisited,visitedGate,dist+1);
                 }
                 visitedGate[i] = 0;
 
@@ -99,24 +113,28 @@ public class Solution {
         /* Enter your code here. Print output to STDOUT. Your class should be named Solution. */
 
         Scanner scanner = new Scanner(System.in);
+        int CC = scanner.nextInt();
 
-        int TotalSpot = scanner.nextInt();
-        int[][] Gate = new int[3][2];
+        for(int ck=0;ck<CC;ck++){
+            int TotalSpot = scanner.nextInt();
+            int[][] Gate = new int[3][2];
 
-        for(int i=0;i<3;i++){
-            for(int j=0;j<2;j++){
-                Gate[i][j] = scanner.nextInt();
+            for(int i=0;i<3;i++){
+                for(int j=0;j<2;j++){
+                    Gate[i][j] = scanner.nextInt();
+                }
             }
+
+            int[] visitedSpot = new int[TotalSpot+1];
+            int[] visitedGate = new int[3];
+            String[] orderText = new String[3];
+            int dist = 0 ;
+            shortest = TotalSpot*TotalSpot;
+            searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,dist);
+            
+            System.out.println(shortest); 
+
         }
 
-        int[] visitedSpot = new int[TotalSpot+1];
-        int[] visitedGate = new int[3];
-        String[] orderText = new String[3];
-        int dist = 0 ;
-        //searchSpot(Gate,TotalSpot,visitedSpot,visitedGate,dist);
-        SpotPlacement(Gate,TotalSpot,visitedSpot, 0 , 0);
-        SpotPlacement(Gate,TotalSpot,visitedSpot, 1 , 1);
-        
-        //System.out.println(Gate[0][0]); 
     }
 }
