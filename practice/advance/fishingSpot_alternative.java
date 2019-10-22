@@ -10,11 +10,11 @@ public class Solution {
         int temp = arr[j];
         arr[j] = arr[i];
         arr[i] = temp;
-	}
+    }
 
     static  boolean isSafe(int i, int spot[]) {
         return (i>=0 && i<N && spot[i] == 0);
-	}
+    }
 
     static void flood(int i, int n, int arr1[], int arr2[]) {
 
@@ -86,7 +86,7 @@ public class Solution {
 
                 }
 
-	    }
+        }
 
         //System.out.println(totalDistance);
 
@@ -94,7 +94,7 @@ public class Solution {
             minGlobal = totalDistance;
         }
 
-	}
+    }
 
 
 
@@ -120,7 +120,7 @@ public class Solution {
 
 
 
-	}
+    }
 
 
 
@@ -142,7 +142,7 @@ public class Solution {
             combination(0, n, arr, arr2);
             return;
 
-	    }
+        }
 
 
 
@@ -154,13 +154,13 @@ public class Solution {
 
         }
 
-	}
+    }
 
 
 
 public static void main(String args[]) {
 
-	Scanner sc = new Scanner(System.in);
+    Scanner sc = new Scanner(System.in);
 
     int test_case = sc.nextInt();
 
@@ -168,7 +168,7 @@ public static void main(String args[]) {
 
         N = sc.nextInt();
 
-        gate = newint[3][2]; 
+        gate = new int[3][2]; 
 
         for(int i=0; i<3; i++) {
 
@@ -176,9 +176,9 @@ public static void main(String args[]) {
 
                 gate[i][j] = sc.nextInt();
 
-	        }
+            }
 
-	    }
+        }
 
 
         minGlobal = Integer.MAX_VALUE;
@@ -191,9 +191,9 @@ public static void main(String args[]) {
 
             System.out.println(minGlobal);
 
-	}
+    }
 
-	}
+    }
 
 }
 
