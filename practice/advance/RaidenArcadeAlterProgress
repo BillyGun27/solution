@@ -1,0 +1,104 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+    static int MaxCoin ;
+    static void Raid(int N,int[][] space,int bomb,int level,int plane, int coin){
+        if(level < 0){
+            //System.out.println("stop "+coin);
+            if(MaxCoin<coin){
+                MaxCoin = coin;
+            }
+            return;
+        }
+        //0 empty, 1 coin, 2 enemy
+        if(level >= 0){
+            
+            int[][] EmptySpace  = new int[N][5];
+            if(bomb == level && bomb != 0){
+                    //System.out.println("b "+bomb+" "+level);
+                    int min = 0;
+                    if((level-5) < 0){
+                        min = level-5;
+                    }
+                    for(int l=N-1;l>=0;l--){
+                        for(int m=0;m<5;m++){
+                            int square = space[l][m];
+                            if( min <= l && l < level ){
+                               if(space[l][m] == 2){
+                                   square=0;
+                               }
+                            }
+
+                             EmptySpace[l][m] = square; 
+                        }
+
+                    }
+                           
+            }
+            
+           for(int i=-1;i<2;i++){
+               int move = plane + i;
+               //System.out.println("t "+level+" "+move+" "+coin);
+               if(0 <= move && move < 5){
+                   
+                   if(space[level][move] == 1){
+                       //System.out.println("getCoin "+level+" "+move+" "+coin);
+                        Raid(N,space,bomb,level-1,move,coin+1);
+                        
+                        if(bomb == level  && bomb != 0 ){
+                           // System.out.println("getCoinBomb "+level+" "+move+" "+coin);
+                            Raid(N,EmptySpace,bomb,level-1,move,coin+1);
+                        }
+                        
+                    }else if(space[level][move] == 2){
+                       //System.out.println("Enemy "+level+" "+move+" "+space[level][move]+" "+coin);
+                       int ccoin = coin;
+                       ccoin--;
+                       if(ccoin>=0){
+                           Raid(N,space,bomb,level-1,move,ccoin);
+                       }
+                   }else{
+                        Raid(N,space,bomb,level-1,move,coin);
+                        
+                        if(bomb == level  && bomb != 0 ){
+                            //System.out.println("getCoinBomb "+level+" "+move+" "+coin);
+                            Raid(N,EmptySpace,bomb,level-1,move,coin);
+                        }
+                   }
+                    
+               }
+                
+        
+            } 
+        }
+    
+    }
+    
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner scanner = new Scanner(System.in);
+        int N = scanner.nextInt();
+        int[][] space = new int[N][5];
+        for(int i=0;i<N;i++){
+            for(int j=0;j<5;j++){
+                space[i][j] = scanner.nextInt();   
+            }
+        }
+        MaxCoin = 0 ;
+        //int visited[] = new int[N];
+        for(int i=N-1;i>=0;i--){
+            //System.out.println(i+" bomb");
+            Raid(N,space,i,N-1,2,0);
+        }
+        if(MaxCoin == 0){
+            System.out.println(-1);
+        }else{
+            System.out.println(MaxCoin);
+        }
+        
+    }
+}
