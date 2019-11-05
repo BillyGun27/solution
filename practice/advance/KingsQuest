@@ -1,0 +1,56 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+    static int MinSpent;
+    
+    static void GrailWar(int N,int[] Orc,int[] Price,int level,int spent,int army,int[] hist){
+        if(level>=N){
+            //for(int i=0;i<N;i++){
+            //    System.out.print(hist[i]+" ");
+            //}
+            //System.out.println(spent);
+            if(MinSpent > spent){
+                MinSpent = spent;
+            }
+        }
+        
+        if(level<N){
+            //pay
+            hist[level] = 1;
+            GrailWar(N,Orc,Price, level+1 , spent+Price[level] , army,hist );
+                
+            //hire
+            hist[level] = 2;
+             GrailWar(N,Orc,Price, level+1 , spent+(Price[level]*2) , army+Orc[level] ,hist);  
+            
+            //fight if have army
+            if(Orc[level]<=army){
+                hist[level] = 3;
+                GrailWar(N,Orc,Price, level+1 , spent , army-Orc[level] ,hist);  
+            }
+        }
+    }
+        
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner sc = new Scanner(System.in);
+        
+        int N = sc.nextInt();
+        int[] Orc = new int[N];
+        int[] Price = new int[N];
+        int maxPrice = 0;
+        for(int i=0;i<N;i++){
+            Orc[i] = sc.nextInt();
+            Price[i] = sc.nextInt();
+            maxPrice+=Price[i];
+        }
+        MinSpent= maxPrice;   
+        int[] hist= new int[N];
+        GrailWar(N,Orc,Price,0,0,0,hist);
+        System.out.println(MinSpent);
+    }
+}
