@@ -1,9 +1,3 @@
-ans
-2250000 (440+190+450+420)
-3748096 (528+461+477+470)
-3928324 (552+418+541+471)
-7236100 (716+713+579+682)
-13104400 (977+954+855+834)
 /*
 5
 5 3
@@ -48,157 +42,132 @@ ans
 773 663 954 237 166 957 722 198 346 337 708 592 443 809 41
 634 174 193 733 800 227 418 503 903 405 261 805 234 461 191
 176 891 203 825 575 508 627 845 610 814 263 159 719 459 903
+
+ans
+2250000 (440+190+450+420)
+3748096 (528+461+477+470)
+3928324 (552+418+541+471)
+7236100 (716+713+579+682)
+13104400 (977+954+855+834)
 */
 import java.util.*;
 
 public class Solution {
-static int Total;
-static int totalHive = 4;
-static int[][][] path = {//W,H
-{{-1,-1},{0,-1},{1,-1},{-1,0},{1,0},{0,1}},//even
-{{0,-1},{-1,0},{1,0},{-1,1},{0,1},{1,1}}//odd
-};
-static void LinearGroup(int H,int W,int[][] hive,int[][] member,int dist , int curH,int curW, int[][] visited){
-if(dist>=totalHive){
-int tot=0;
-for(int i=0;i<totalHive;i++){
-tot+= hive[member[i][0]][member[i][1]];
-}
-tot = tot*tot;
-if(Total<tot){
-for(int i=0;i<totalHive;i++){
-System.out.print( hive[member[i][0]][member[i][1]] +" ");
-}System.out.println("l"+tot);
-Total = tot;
-}
+    static int Total;
+    static int totalHive = 4;
+    static int[][][] path = {//W,H
+        {{-1,-1},{0,-1},{1,-1},{-1,0},{1,0},{0,1}},//even
+        {{0,-1},{-1,0},{1,0},{-1,1},{0,1},{1,1}}//odd
+    };
 
-}else{
-/*
-System.out.println(" ")
-for(int i=0;i<H;i++){
-for(int j=0;j<W;j++){
-System.out.print(visited[ nextH ][ nextH ]+" ")
-}
-}
-System.out.println(" ")*/
-int Par = curW % 2;
-int n = 0;
-for(int i=0;i<path[Par].length;i++){
-int nextH = curH + path[Par][i][1];
-int nextW = curW + path[Par][i][0];
-if( (0 <= nextH && nextH < H) && (0 <= nextW && nextW < W) ){
-member[dist][0] = nextH;
-member[dist][1] = nextW;
-if(visited[ nextH ][ nextW ] == 0){
-//System.out.print("("+visited[ nextH ][ nextW ]+" "+hive[nextH][nextW]+" "+nextH+","+nextW+" vv)");
-visited[ nextH ][ nextW ] = 1;
-LinearGroup(H,W,hive,member,dist+1, nextH , nextW ,visited);
-visited[ nextH ][ nextW ] = 0;
-}
-}
-}
-}
-}
-static void NeighborGroup(int H,int W,int[][] hive,int[][] member,int dist,int[][] neighbor,int n,int nprog, int[][] visited){
-if(dist>=totalHive){
-int tot=0;
-for(int i=0;i<totalHive;i++){
-tot+= hive[member[i][0]][member[i][1]];
-}
-tot = tot*tot;
-if(Total<tot){
-for(int i=0;i<totalHive;i++){
-System.out.print( hive[member[i][0]][member[i][1]] +" ");
-}System.out.println("n"+tot);
-Total = tot;
-}
+    static void NeighLin(int H,int W,int[][] Quad,int cH,int cW,int[][] visited,int[] userNum,int dist){
+        if(dist>=totalHive){
+            int tot = 0;
+            for(int i=0;i<totalHive;i++){
+                tot+=userNum[i];
+            }
+            tot = tot*tot;
+            if( Total < tot ){
+            //    for(int i=0;i<totalHive;i++){
+            //        System.out.print(userNum[i]+" ");
+            //    }System.out.println("l "+ (tot) );
+                Total = tot;
+            }
+        }else{
+            int par = cW % 2;
+            for(int p=0;p<6;p++){
+                int nH = cH + path[par][p][1];
+                int nW = cW + path[par][p][0];
+                if( (0<=nH && nH<H) && (0<=nW && nW<W) ){
+                    if(visited[nH][nW]==0){
+                        visited[nH][nW] = 1;
+                        userNum[dist] = Quad[nH][nW];
+                        NeighLin(H,W,Quad,nH,nW,visited,userNum,dist+1);
+                        visited[nH][nW] = 0;
+                    }
+                }
+            }
+        }
+    }
 
-}else{
-// for(int i=0;i<dist;i++){
-// System.out.print( hive[member[i][0]][member[i][1]] +" ");
-// }System.out.println("s nprog"+nprog+" n"+n);
+    static void NeighFind(int H,int W,int[][] Quad,int cH,int cW,int[][] neighbor,int n,int c,int[][] visited,int[] userNum,int dist){
+        if(dist>=totalHive){
+            int tot = 0;
+            for(int i=0;i<totalHive;i++){
+                //System.out.print(userNum[i]+" ");
+                tot+=userNum[i];
+            }//System.out.println("n "+(tot*tot));
+            
+            tot = tot*tot;
+            if( Total < tot ){
+                Total = tot;
+            }
+        }else{
+       
+            for(int i=c;i<n;i++){
+                userNum[dist] = Quad[neighbor[i][0]][neighbor[i][1]];
+                NeighFind(H,W,Quad,neighbor[i][0],neighbor[i][1],neighbor,n,i+1,visited,userNum,dist+1);
+                if(dist+1 < totalHive){
+                    NeighLin(H,W,Quad,neighbor[i][0],neighbor[i][1],visited,userNum,dist+1);
+                }
+            }
+        }
+        
+    }
 
-//System.out.print("("+ visited[member[0][0]][member[0][1]]+" "+hive[member[0][0]][member[0][1]]+" "+member[0][0]+","+member[0][1]+" v)");
-for(int i=nprog;i<n;i++){
-//System.out.println(i+" nprog"+nprog+" n"+n+" dist"+dist);
-int nH = neighbor[i][0];//H
-int nW = neighbor[i][1];//W
-member[dist][0] = nH;
-member[dist][1] = nW;
-//if(visited[ nH ][ nW ] == 0){
-NeighborGroup(H,W,hive,member,dist+1,neighbor,n,i+1,visited);
-if(dist+1 < totalHive){
-//visited[ nH ][ nW ] = 1;
-//System.out.print("("+visited[ nH ][ nW ]+" "+hive[nH][nW]+" "+nH+","+nW+" v)");
-LinearGroup(H,W,hive,member,dist+1, nH , nW ,visited);
-//visited[ nH ][ nW ] = 0;
-//System.out.println(" ");
-}
-//}
-//System.out.println("new");
-}
-}
-}
+    static void NeighGroup(int H,int W,int[][] Quad,int cH,int cW){
+        int n=0;
+        int[][] neighbor = new int[6][2];
+        int par = cW % 2;
+        int[][] visited = new int[H][W];
+        visited[cH][cW] = 1;
+        for(int p=0;p<6;p++){
+            int nH = cH + path[par][p][1];
+            int nW = cW + path[par][p][0];
+            if( (0<=nH && nH<H) && (0<=nW && nW<W) ){
+                visited[nH][nW] = 1;
+                neighbor[n][0] = nH;
+                neighbor[n][1] = nW; 
+                n++;
+            }
+        }
 
-static void NeighborFind(int H,int W,int[][] hive,int curH,int curW, int[][] member,int dist){
-int[][] neighbor = new int[6][2];//H,W
-//x%2 0=even 1=odd
+        //System.out.print(Quad[cH][cW]+" ");
+        //for(int i=0;i<n;i++){
+        //    System.out.print(Quad[neighbor[i][0]][neighbor[i][1]]+" ");
+        //}System.out.println();    
 
-int Par = curW % 2;
-int n = 0;
-int visited[][] = new int[H][W];
-visited[curH][curW] = 1;
-for(int i=0;i<path[Par].length;i++){
-int nextH = curH + path[Par][i][1];
-int nextW = curW + path[Par][i][0];
-//System.out.println("b "+nextH+","+nextW);
-if( (0 <= nextH && nextH < H) && (0 <= nextW && nextW < W) ){
-//System.out.println("a "+nextH+","+nextW);
-neighbor[n][0] = nextH;
-neighbor[n][1] = nextW;
+        int[] userNum = new int[4];
+        userNum[0] = Quad[cH][cW];
+        NeighFind(H,W,Quad,cH,cW,neighbor,n,0,visited,userNum,1);
+    }
 
-visited[nextH][nextW] = 1;
-n++;
-}
-}
+    public static void main(String[] args) {
+        /* Enter your code here. Print output to STDOUT. Your class should be named Solution. */
 
-NeighborGroup(H,W,hive,member,dist,neighbor,n,0,visited);
-//for(int i=0;i<n;i++){
-// System.out.print(neighbor[i][0]+","+neighbor[i][1]+" | ");
-//}System.out.println();
+        Scanner sc = new Scanner(System.in);
+        int T = sc.nextInt();
 
+        for(int t=0;t<T;t++){
+            int W = sc.nextInt();
+            int H = sc.nextInt();
+            int[][] Quad = new int[H][W];
 
-}
-public static void main(String[] args) {
-/* Enter your code here. Print output to STDOUT. Your class should be named Solution. */
+            for(int i=0;i<H;i++){
+                for(int j=0;j<W;j++){
+                    Quad[i][j] = sc.nextInt();
+                }
+            }
 
-Scanner scanner = new Scanner(System.in);
-int T = scanner.nextInt();
-for(int t=0;t<T;t++){
-int W = scanner.nextInt();
-int H = scanner.nextInt();
-int[][] hive = new int[H][W];
+            Total = 0;
+            for(int i=0;i<H;i++){
+                for(int j=0;j<W;j++){
+                    NeighGroup(H,W,Quad,i,j);
+                }
+            }
 
-for(int i=0;i<H;i++){
-for(int j=0;j<W;j++){
-hive[i][j] = scanner.nextInt();
-}
-}
+            System.out.println(Total);
+        }
 
-Total = 0;
-for(int i=0;i<H;i++){
-for(int j=0;j<W;j++){
-int curH = i;
-int curW = j;
-int[][] member = new int[4][2];
-int dist = 0;
-member[dist][0] = curH;//hive[0][0];
-member[dist][1] = curW;//hive[0][1];
-NeighborFind(H,W,hive,curH,curW,member,dist+1);
+    }
 }
-}
-System.out.println(Total);
-}
-}
-}
-
