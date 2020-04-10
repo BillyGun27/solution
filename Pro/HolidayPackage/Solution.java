@@ -38,7 +38,7 @@ class Solution
 		int cmd, ret;
 		
 		L = Integer.parseInt(br.readLine());
-		boolean first = true;
+		
 		for (int i = 0; i < L; ++i)
 		{
 			st = new StringTokenizer(br.readLine(), " ");
@@ -89,13 +89,14 @@ class Solution
 					int rr = usersolution.recommend_debug(uid);
 					first = false;
 				}*/
+				
 				if (ret != ans) {
-					if(first) {
-						System.out.println("ans : " + ans + ", ret : " + ret);
+					//if(first) {
+					//	System.out.println("ans : " + ans + ", ret : " + ret);
 						
-						int rr = usersolution.recommend_debug(uid);
-						first = false;
-					}
+					//	int rr = usersolution.recommend_debug(uid);
+					//	first = false;
+					//}
 					
 					okay = false;
 				}
@@ -117,7 +118,7 @@ class Solution
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine(), " ");
 		
-		TC = 1;//Integer.parseInt(st.nextToken());
+		TC = Integer.parseInt(st.nextToken());
 		MARK = Integer.parseInt(st.nextToken());
 
 		for (int testcase = 1; testcase <= TC; ++testcase) {
