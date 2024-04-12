@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-interface SRINsolution		// SRIN: to simplify switching solutions (for benchmarking purpose)
+interface SENDsolution		// SEND: to simplify switching solutions (for benchmarking purpose)
 {	
 	void init(int N, int M);
 	void befriend(int uid1, int uid2);
@@ -21,7 +21,7 @@ class Solution
 		
 	// private final 
 	static UserSolution usersolution = new UserSolution();
-	// static SRINsolution usersolution;
+	// static SENDsolution usersolution;
 		
 	private static boolean run(BufferedReader br) throws Exception
 	{
@@ -49,7 +49,7 @@ class Solution
 				N = Integer.parseInt(st.nextToken());
 				M = Integer.parseInt(st.nextToken());
 
-				//if (!SRINtimer.isCompare) SRINtimer.timer.timerStart(SRINtimer.timerSlot = 1);
+				//if (!SENDtimer.isCompare) SENDtimer.timer.timerStart(SENDtimer.timerSlot = 1);
 				usersolution.init(N, M);
 				okay = true;
 				break;
@@ -57,7 +57,7 @@ class Solution
 				uid1 = Integer.parseInt(st.nextToken());
 				uid2 = Integer.parseInt(st.nextToken());
 
-				//if (!SRINtimer.isCompare) SRINtimer.timer.timerStart(SRINtimer.timerSlot = 2);
+				//if (!SENDtimer.isCompare) SENDtimer.timer.timerStart(SENDtimer.timerSlot = 2);
 				usersolution.befriend(uid1, uid2);
 				break;
 			case ADD:
@@ -65,21 +65,21 @@ class Solution
 				area = Integer.parseInt(st.nextToken());
 				price = Integer.parseInt(st.nextToken());
 
-				//if (!SRINtimer.isCompare) SRINtimer.timer.timerStart(SRINtimer.timerSlot = 3);
+				//if (!SENDtimer.isCompare) SENDtimer.timer.timerStart(SENDtimer.timerSlot = 3);
 				usersolution.add(pid, area, price);
 				break;
 			case RESERVE:
 				uid = Integer.parseInt(st.nextToken());
 				pid = Integer.parseInt(st.nextToken());
 				
-				//if (!SRINtimer.isCompare) SRINtimer.timer.timerStart(SRINtimer.timerSlot = 4);
+				//if (!SENDtimer.isCompare) SENDtimer.timer.timerStart(SENDtimer.timerSlot = 4);
 				usersolution.reserve(uid, pid);
 				break;
 			case RECOMMEND:
 				uid = Integer.parseInt(st.nextToken());
 				ans = Integer.parseInt(st.nextToken());
 
-				//if (!SRINtimer.isCompare) SRINtimer.timer.timerStart(SRINtimer.timerSlot = 5);
+				//if (!SENDtimer.isCompare) SENDtimer.timer.timerStart(SENDtimer.timerSlot = 5);
 				
 				ret = usersolution.recommend(uid);
 				/*
@@ -102,7 +102,7 @@ class Solution
 				}
 				break;
 			}
-			//if (!SRINtimer.isCompare) SRINtimer.timer.timerStop(SRINtimer.timerSlot);
+			//if (!SENDtimer.isCompare) SENDtimer.timer.timerStop(SENDtimer.timerSlot);
 
 		}
 		
